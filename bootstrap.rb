@@ -15,7 +15,7 @@ machine 'provisioner' do
   machine_options convergence_options: { chef_version: node['chef_client_version'] },
     bootstrap_options: {iam_instance_profile: { name: 'spincycle_provisioner'}, key_name: node['ssh_key']},
     transport_options: {ssh_options: { use_agent: true}}
-  action :allocate
+  action :setup
 end
 
 machine_execute 'make ssh dir' do
@@ -31,7 +31,7 @@ machine_file "/home/ubuntu/.ssh/#{node['ssh_key']}" do
 end
 
 machine 'provisioner' do
-  attributes chef_version: node["chef_client_version"], ssh_key: node['ssh_key']
+  attributes chef_client_version: node["chef_client_version"], ssh_key: node['ssh_key']
   recipe 'stress'
   converge true
 end

@@ -7,10 +7,5 @@ with_chef_server node[:bootstrap_url],
   signing_key_filename: node[:bootstrap_key]
 
 machine 'provisioner' do
-  action :converge
-  run_list %w( recipe[stress::destroy] )
-end
-
-machine 'provisioner' do
   action :destroy
 end
