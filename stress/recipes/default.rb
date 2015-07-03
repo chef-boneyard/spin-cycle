@@ -42,4 +42,12 @@ machine_batch 'centos' do
   end
 end
 
+machine_batch 'windows' do
+  machine 'windows_base' do
+    machine_options convergence_options: { chef_version: node['chef_client_version'] },
+      bootstrap_options: { image_id: 'ami-876983c3', instance_type: 'm3.medium', key_name: node['ssh_key']}, is_windows: true
+    recipe 'stress::windows_base'
+    converge true
+  end
+end
 include_recipe 'stress::destroy'
