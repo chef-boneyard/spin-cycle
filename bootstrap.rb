@@ -19,7 +19,7 @@ machine 'provisioner' do
 end
 
 machine_execute 'make ssh dir' do
-  command 'mkdir -p /home/ubuntu/.ssh && chown -R ubuntu: /home/ubuntu/.ssh && chmod 0700 /home/ubuntu/.ssh'
+  command 'mkdir -p /home/ubuntu/.ssh && chown ubuntu: /home/ubuntu/.ssh && chmod 0700 /home/ubuntu/.ssh'
   machine 'provisioner'
 end
 
