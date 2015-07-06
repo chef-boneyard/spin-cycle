@@ -24,30 +24,28 @@ aws_key_pair node['ssh_key'] do
   private_key_path ::File.expand_path("~/.ssh/#{node['ssh_key']}")
 end
 
-machine_batch 'ubuntu' do
-  machine 'ubuntu_base' do
-    machine_options convergence_options: { chef_version: node['chef_client_version'] },
-      bootstrap_options: { key_name: node['ssh_key']}
+# machine_batch 'ubuntu' do
+  test_machine 'ubuntu_base' do
+    ami 'ami-b33dccf7'
+    ssh_username 'ubuntu'
     recipe 'stress::ubuntu_base'
-    converge true
   end
-end
+# end
 
-machine_batch 'centos' do
-  machine 'centos_base' do
-    machine_options convergence_options: { chef_version: node['chef_client_version'] },
-      bootstrap_options: { image_id: 'ami-57cfc412', key_name: node['ssh_key']}, ssh_username: 'root'
+# machine_batch 'centos' do
+  test_machine 'centos_base' do
+    ami 'ami-57cfc412'
+    ssh_username 'root'
     recipe 'stress::centos_base'
-    converge true
   end
-end
+# end
 
-machine_batch 'windows' do
-  machine 'windows_base' do
-    machine_options convergence_options: { chef_version: node['chef_client_version'] },
-      bootstrap_options: { image_id: 'ami-876983c3', instance_type: 'm3.medium', key_name: node['ssh_key']}, is_windows: true
+# machine_batch 'windows' do
+  test_machine 'windows_base' do
+    ami 'ami-876983c3'
+    instance_type 'm3.medium'
+    windows true
     recipe 'stress::windows_base'
-    converge true
   end
-end
+# end
 include_recipe 'stress::destroy'
