@@ -1,6 +1,5 @@
-node['machines'].each do |bye|
-  machine bye do
-    action :destroy
-    ignore_failure true
-  end
+machine_batch 'bye' do
+  machines node['machines'].keys
+  action :destroy
+  ignore_failure true
 end
