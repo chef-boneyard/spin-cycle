@@ -11,7 +11,7 @@ chef_gem 'chef-provisioning-aws' do
 end
 
 begin
-require 'chef/provisioning/aws_driver'
+  require 'chef/provisioning/aws_driver'
 rescue LoadError
   puts "will load c-p-a later"
 end
@@ -24,28 +24,29 @@ aws_key_pair node['ssh_key'] do
   private_key_path ::File.expand_path("~/.ssh/#{node['ssh_key']}")
 end
 
-# machine_batch 'ubuntu' do
-  test_machine 'ubuntu_base' do
-    ami 'ami-b33dccf7'
-    ssh_username 'ubuntu'
-    recipe 'stress::ubuntu_base'
+node['machines'].each_pair do |name, obj|
+  test_machine name do
+    ami obj[:ami]
+    ssh_username obj[:user]
+    recipe obj[:recipe]
+    windows obj[:windows] || false
+    instance_type obj[:instance_type] if obj[:instance_type]
   end
-# end
+end
 
-# machine_batch 'centos' do
-  test_machine 'centos_base' do
-    ami 'ami-57cfc412'
-    ssh_username 'root'
-    recipe 'stress::centos_base'
+ruby_block 'delete' do
+  block do
+    mb = Chef::Resource::MachineBatch.new('byebye', run_context)
+    mb.machines node.run_state['successful_machines']
+    mb.ignore_failure true
+    mb.run_action(:destroy)
   end
-# end
+end
 
-# machine_batch 'windows' do
-  test_machine 'windows_base' do
-    ami 'ami-876983c3'
-    instance_type 'm3.medium'
-    windows true
-    recipe 'stress::windows_base'
+ruby_block 'failed machines' do
+  block do
+    node.run_state['failed_machines'].each_pair do |name, err|
+      Chef::Log.info("Node #{name} failed with #{err.message}")
+    end
   end
-# end
-include_recipe 'stress::destroy'
+end

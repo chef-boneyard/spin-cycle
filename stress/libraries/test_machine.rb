@@ -29,9 +29,9 @@ class Chef::Provider::TestMachine < Chef::Provider::LWRPBase
     machine new_resource.name do
       machine_options convergence_options: { chef_version: node['chef_client_version'] },
         bootstrap_options: {
-          image_id: new_resource.ami,
-          key_name: node['ssh_key'],
-          instance_type: new_resource.instance_type
+        image_id: new_resource.ami,
+        key_name: node['ssh_key'],
+        instance_type: new_resource.instance_type
       }, ssh_username: new_resource.ssh_username, is_windows: new_resource.windows
       recipe new_resource.recipe
       converge true
